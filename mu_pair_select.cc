@@ -143,12 +143,15 @@ void mu_pair_select(){
             }
         }
         //tag
-        for (int j = 0; mu_pair_number.size(); j++){
+        std::cout << "start tagging" << std::endl;
+
+        for (int j = 0; j < mu_pair_number.size(); j++){
+            std::cout << "good" << std::endl;
             int tag_muon_number = mu_pair_number.at(j).first;
             int probe_muon_number = mu_pair_number.at(j).second;
 
             for (int k = 0; k < trigger_info_ptVec->at(trig_chain).size(); k++){
-
+                std::cout << "good!" << std::endl;
                 TVector3 tag_muon;
                 tag_muon.SetPtEtaPhi(mu_pt->at(tag_muon_number), mu_eta->at(tag_muon_number), mu_phi->at(tag_muon_number));
                 TVector3 hlt_muon;
