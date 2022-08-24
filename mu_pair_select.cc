@@ -10,8 +10,12 @@
 
 void mu_pair_select(){
     TChain* chain = new TChain("physics");
-    chain->Add("/mnt/susy11/data04/atlas/data16_13TeV/periodL/mu_sample/user.junpei.00311481.physics_Main.merge.NTUP_MCP.1.f758_m1714.00-00-32_L1TGCNtuple_derivated.02-04-00.root");
+    //chain->Add("/mnt/susy11/data04/atlas/data16_13TeV/periodL/mu_sample/user.junpei.00311481.physics_Main.merge.NTUP_MCP.1.f758_m1714.00-00-32_L1TGCNtuple_derivated.02-04-00.root");
     //chain->Add("/mnt/susy11/data04/atlas/data16_13TeV/periodL/mu_sample/*.root");
+	//chain->Add("/gpfs/fs7001/tanakamu/DESDM_MCP/data16_PeriodG/user.tanakamu.L1TGCNtuple.data16_13TeV.DESDM_MCP.PeriodG_v1_LightTGCNtuple/user.tanakamu.28152768.LightTGCNtuple._000001.root");
+
+	//chain->Add("/gpfs/fs7001/junpei/L1TGCNtuple/data16_13TeV/data16_13TeV.periodL/user.junpei.00310634.physics_Main.merge.NTUP_MCP.1.f756_m1708.00-00-32_L1TGCNtuple_derivated.02-03-00.root");
+	chain->Add("/gpfs/fs7001/junpei/L1TGCNtuple/data16_13TeV/data16_13TeV.periodL/*.root");
 
     chain->SetBranchStatus("*", 0);
     chain->SetBranchStatus("mu_m", 1);
@@ -109,7 +113,7 @@ void mu_pair_select(){
                 bool flag_mu1_author = mu_author->at(j) == 1;
                 bool flag_mu1_Type = mu_muonType->at(j) == 0;
 
-                if(flag_mu1_author && flag_mu1_author){
+                if(flag_mu1_author && flag_mu1_Type){
                     TLorentzVector mu1;
                     mu1.SetPtEtaPhiM(mu_pt->at(j), mu_eta->at(j), mu_phi->at(j), mu_m->at(j));
                     for(int k = 0; k < mu_m->size(); k++){
@@ -143,15 +147,15 @@ void mu_pair_select(){
             }
         }
         //tag
-        std::cout << "start tagging" << std::endl;
+        //std::cout << "start tagging" << std::endl;
 
         for (int j = 0; j < mu_pair_number.size(); j++){
-            std::cout << "good" << std::endl;
+            //std::cout << "good" << std::endl;
             int tag_muon_number = mu_pair_number.at(j).first;
             int probe_muon_number = mu_pair_number.at(j).second;
 
             for (int k = 0; k < trigger_info_ptVec->at(trig_chain).size(); k++){
-                std::cout << "good!" << std::endl;
+                //std::cout << "good!" << std::endl;
                 TVector3 tag_muon;
                 tag_muon.SetPtEtaPhi(mu_pt->at(tag_muon_number), mu_eta->at(tag_muon_number), mu_phi->at(tag_muon_number));
                 TVector3 hlt_muon;
@@ -164,7 +168,7 @@ void mu_pair_select(){
                 if(tag_DeltaR < 0.01){
                     tag_muon_momentum_cut_hist->Fill(mu_pt->at(tag_muon_number));
                     probe_muon_momentum_hist->Fill(mu_pt->at(probe_muon_number));
-                    if(mu_pt->at(probe_muon_number) > 1.05 && mu_pt->at(probe_muon_number) < 2.4){
+                    if(mu_eta->at(probe_muon_number) > 1.05 && mu_eta->at(probe_muon_number) < 2.4){
                         probe_muon_barrel_momentum_hist->Fill(mu_pt->at(probe_muon_number));
                     }
                     else{
@@ -179,7 +183,7 @@ void mu_pair_select(){
                         float probe_DeltaR = probe_muon.DeltaR(hlt_probe_muon);
                         if(probe_DeltaR < 0.01){
                             probe_muon_momentum_cut_hist->Fill(mu_pt->at(probe_muon_number));
-                            if(mu_pt->at(probe_muon_number) > 1.05 && mu_pt->at(probe_muon_number) < 2.4){
+                            if(mu_eta->at(probe_muon_number) > 1.05 && mu_eta->at(probe_muon_number) < 2.4){
                                 probe_muon_barrel_momentum_cut_hist->Fill(mu_pt->at(probe_muon_number));
                             }
                             else{
@@ -204,8 +208,10 @@ void mu_pair_select(){
 
     canvas1->cd();
     mass_hist->Draw();
+	canvas1->SaveAs("img/mass_hist.png");
     canvas2->cd();
     pt_hist->Draw();
+	canvas2->SaveAs("img/pt_hist.png");
     canvas3->cd();
     probe_muon_momentum_hist->Draw();
     probe_muon_momentum_cut_hist->Draw("same");
@@ -213,22 +219,23 @@ void mu_pair_select(){
     canvas4->cd();
     probe_hlt_efficiency_hist->Divide(probe_muon_momentum_cut_hist, probe_muon_momentum_hist);
     probe_hlt_efficiency_hist->Draw();
+	canvas4->SaveAs("img/probe_efficiency_hist.png");
     canvas5->cd();
     pEff->Draw("AP");
-    canvas5->SaveAs("img2/efficiency.png");
+    canvas5->SaveAs("img/efficiency.png");
     canvas6->cd();
     pEff_endcap->Draw("AP");
-    canvas6->SaveAs("img2/endcap_efficiency.png");
+    canvas6->SaveAs("img/endcap_efficiency.png");
     canvas7->cd();
     pEff_barrel->Draw("AP");
-    canvas7->SaveAs("img2/barrel_efficiency.png");
+    canvas7->SaveAs("img/barrel_efficiency.png");
     canvas8->cd();
     probe_muon_endcap_momentum_cut_hist->Draw();
     probe_muon_endcap_momentum_hist->Draw("same");
-    canvas8->SaveAs("img2/endcap_efficiency_hist.png");
+    canvas8->SaveAs("img/endcap_efficiency_hist.png");
     canvas9->cd();
     probe_muon_barrel_momentum_cut_hist->Draw("same");
     probe_muon_barrel_momentum_hist->Draw("same");
-    canvas9->SaveAs("img2/barrel_efficiency_hist.png");
+    canvas9->SaveAs("img/barrel_efficiency_hist.png");
 
 }
